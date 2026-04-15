@@ -1,0 +1,65 @@
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+    output = "/home/ubuntu/careerlens/nextjs_space/node_modules/.prisma/client"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Analysis {
+  id              String   @id @default(cuid())
+  fileName        String
+  targetRole      String
+  score           Int
+  strengths       Json     @default("[]")
+  weaknesses      Json     @default("[]")
+  missingSkills   Json     @default("[]")
+  careerPaths     Json     @default("[]")
+  jobMatches      Json     @default("[]")
+  tips            Json     @default("[]")
+  atsScore        Int?
+  keywordMatch    Int?
+  formatScore     Int?
+  readabilityScore Int?
+  atsIssues       Json     @default("[]")
+  atsFixes        Json     @default("[]")
+  missingKeywords Json     @default("[]")
+  cloudStoragePath String?
+  isPublic        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model JDMatch {
+  id               String   @id @default(cuid())
+  fileName         String
+  jobDescription   String
+  overallMatch     Int
+  skillMatch       Int
+  experienceMatch  Int
+  educationMatch   Int
+  matchedKeywords  Json     @default("[]")
+  missingKeywords  Json     @default("[]")
+  strongPoints     Json     @default("[]")
+  weakPoints       Json     @default("[]")
+  recommendation   String
+  summary          String
+  createdAt        DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model InterviewPrep {
+  id               String   @id @default(cuid())
+  fileName         String
+  targetRole       String
+  difficulty       String
+  questions        Json     @default("{}")
+  createdAt        DateTime @default(now())
+
+  @@index([createdAt])
+}
