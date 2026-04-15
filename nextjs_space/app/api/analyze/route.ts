@@ -206,36 +206,43 @@ export async function POST(request: NextRequest) {
                     }
                     const finalResult = JSON.parse(cleanBuffer);
 
-                    // Save to database
-                    const analysis = await prisma.analysis.create({
-                      data: {
-                        fileName,
-                        targetRole: targetRole?.trim() ?? "",
-                        score: Number(finalResult?.score ?? 0),
-                        strengths: finalResult?.strengths ?? [],
-                        weaknesses: finalResult?.weaknesses ?? [],
-                        missingSkills: finalResult?.missing_skills ?? [],
-                        careerPaths: finalResult?.career_paths ?? [],
-                        jobMatches: finalResult?.job_matches ?? [],
-                        tips: finalResult?.tips ?? [],
-                        atsScore: Number(finalResult?.ats_score ?? 0),
-                        keywordMatch: Number(finalResult?.keyword_match ?? 0),
-                        formatScore: Number(finalResult?.format_score ?? 0),
-                        readabilityScore: Number(
-                          finalResult?.readability_score ?? 0,
-                        ),
-                        atsIssues: finalResult?.ats_issues ?? [],
-                        atsFixes: finalResult?.ats_fixes ?? [],
-                        missingKeywords: finalResult?.missing_keywords ?? [],
-                        cloudStoragePath: cloudStoragePath || null,
-                        isPublic: false,
-                      },
-                    });
+                    // Save to database (optional)
+                    let analysisId = null;
+                    try {
+                      const analysis = await prisma.analysis.create({
+                        data: {
+                          fileName,
+                          targetRole: targetRole?.trim() ?? "",
+                          score: Number(finalResult?.score ?? 0),
+                          strengths: finalResult?.strengths ?? [],
+                          weaknesses: finalResult?.weaknesses ?? [],
+                          missingSkills: finalResult?.missing_skills ?? [],
+                          careerPaths: finalResult?.career_paths ?? [],
+                          jobMatches: finalResult?.job_matches ?? [],
+                          tips: finalResult?.tips ?? [],
+                          atsScore: Number(finalResult?.ats_score ?? 0),
+                          keywordMatch: Number(finalResult?.keyword_match ?? 0),
+                          formatScore: Number(finalResult?.format_score ?? 0),
+                          readabilityScore: Number(
+                            finalResult?.readability_score ?? 0,
+                          ),
+                          atsIssues: finalResult?.ats_issues ?? [],
+                          atsFixes: finalResult?.ats_fixes ?? [],
+                          missingKeywords: finalResult?.missing_keywords ?? [],
+                          cloudStoragePath: cloudStoragePath || null,
+                          isPublic: false,
+                        },
+                      });
+                      analysisId = analysis?.id ?? null;
+                    } catch (dbErr) {
+                      console.error("Database save failed:", dbErr);
+                      // Continue even if DB save fails
+                    }
 
                     const finalData = JSON.stringify({
                       status: "completed",
                       result: finalResult,
-                      analysisId: analysis?.id ?? null,
+                      analysisId,
                     });
                     controller.enqueue(
                       encoder.encode(`data: ${finalData}\n\n`),
@@ -291,33 +298,43 @@ export async function POST(request: NextRequest) {
               }
               const finalResult = JSON.parse(cleanBuffer);
 
-              const analysis = await prisma.analysis.create({
-                data: {
-                  fileName,
-                  targetRole: targetRole?.trim() ?? "",
-                  score: Number(finalResult?.score ?? 0),
-                  strengths: finalResult?.strengths ?? [],
-                  weaknesses: finalResult?.weaknesses ?? [],
-                  missingSkills: finalResult?.missing_skills ?? [],
-                  careerPaths: finalResult?.career_paths ?? [],
-                  jobMatches: finalResult?.job_matches ?? [],
-                  tips: finalResult?.tips ?? [],
-                  atsScore: Number(finalResult?.ats_score ?? 0),
-                  keywordMatch: Number(finalResult?.keyword_match ?? 0),
-                  formatScore: Number(finalResult?.format_score ?? 0),
-                  readabilityScore: Number(finalResult?.readability_score ?? 0),
-                  atsIssues: finalResult?.ats_issues ?? [],
-                  atsFixes: finalResult?.ats_fixes ?? [],
-                  missingKeywords: finalResult?.missing_keywords ?? [],
-                  cloudStoragePath: cloudStoragePath || null,
-                  isPublic: false,
-                },
-              });
+              // Save to database (optional)
+              let analysisId = null;
+              try {
+                const analysis = await prisma.analysis.create({
+                  data: {
+                    fileName,
+                    targetRole: targetRole?.trim() ?? "",
+                    score: Number(finalResult?.score ?? 0),
+                    strengths: finalResult?.strengths ?? [],
+                    weaknesses: finalResult?.weaknesses ?? [],
+                    missingSkills: finalResult?.missing_skills ?? [],
+                    careerPaths: finalResult?.career_paths ?? [],
+                    jobMatches: finalResult?.job_matches ?? [],
+                    tips: finalResult?.tips ?? [],
+                    atsScore: Number(finalResult?.ats_score ?? 0),
+                    keywordMatch: Number(finalResult?.keyword_match ?? 0),
+                    formatScore: Number(finalResult?.format_score ?? 0),
+                    readabilityScore: Number(
+                      finalResult?.readability_score ?? 0,
+                    ),
+                    atsIssues: finalResult?.ats_issues ?? [],
+                    atsFixes: finalResult?.ats_fixes ?? [],
+                    missingKeywords: finalResult?.missing_keywords ?? [],
+                    cloudStoragePath: cloudStoragePath || null,
+                    isPublic: false,
+                  },
+                });
+                analysisId = analysis?.id ?? null;
+              } catch (dbErr) {
+                console.error("Database save failed:", dbErr);
+                // Continue even if DB save fails
+              }
 
               const finalData = JSON.stringify({
                 status: "completed",
                 result: finalResult,
-                analysisId: analysis?.id ?? null,
+                analysisId,
               });
               controller.enqueue(encoder.encode(`data: ${finalData}\n\n`));
             } catch (parseErr: any) {

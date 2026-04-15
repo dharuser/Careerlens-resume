@@ -517,6 +517,8 @@ export function ResultsDashboard({
             </div>
           )) ?? []}
         </div>
+      </motion.div>
+
       {/* Next Steps */}
       <motion.div
         custom={7}
